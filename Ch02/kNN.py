@@ -54,7 +54,7 @@ def autoNorm(dataSet):
     minVals = dataSet.min(0)
     maxVals = dataSet.max(0)
     ranges = maxVals - minVals
-    normDataSet = np.zeros(shape(dataSet))
+    normDataSet = np.zeros(np.shape(dataSet))
     m = dataSet.shape[0]
     normDataSet = dataSet - np.tile(minVals, (m,1))
     normDataSet = normDataSet/np.tile(ranges, (m,1))   #element wise divide
