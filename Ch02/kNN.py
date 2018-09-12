@@ -51,25 +51,36 @@ def autoNorm(dataSet):
     minVals = dataSet.min(0)
     maxVals = dataSet.max(0)
     ranges = maxVals - minVals
-    normDataSet = np.zeros(np.shape(dataSet))
+    normData = np.zeros(np.shape(dataSet))
     m = dataSet.shape[0]
-    normDataSet = dataSet - np.tile(minVals, (m,1))
-    normDataSet = normDataSet/np.tile(ranges, (m,1))   #element wise divide
-    return normDataSet, ranges, minVals
+    normData = dataSet - np.tile(minVals, (m,1))
+    normData = normData / np.tile(ranges, (m,1))
+    return normData, ranges, minVals
 
 def datingClassTest():
     holdOut = 0.50      #hold out 10%
-    datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
-    normMat, ranges, minVals = autoNorm(datingDataMat)
-    m = normMat.shape[0]
+    datingData,datingLabels = file2matrix('datingTestSet2.txt')
+    normData, ranges, minVals = autoNorm(datingData)
+    m = normData.shape[0]
     numTestVecs = int(m*holdOut)
     errorCount = 0.0
     for i in range(numTestVecs):
-        classifierResult = classify(normMat[i,:],normMat[numTestVecs:m,:],datingLabels[numTestVecs:m],3)
+        classifierResult = classify(normData[i,:],normData[numTestVecs:m,:],datingLabels[numTestVecs:m],3)
         print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, datingLabels[i])
         if (classifierResult != datingLabels[i]): errorCount += 1.0
     print "the total error count is: %d" % errorCount
     print "the total error rate is: %f" % (errorCount/float(numTestVecs))
+
+def classifyPerson():
+    result = ['not at all', 'in small doses', 'in large doses']
+    miles = float(raw_input('flier miles per year: '))
+    percent = float(raw_input('percent of time spent playing video games: '))
+    icecream = float(raw_input('liters of icecream consumed per year: '))
+    datingData, datingLabels = file2matrix('datingTestSet2.txt')
+    normData, ranges, minVals = autoNorm(datingData)
+    data = np.array([miles, percent, icecream])
+    class_ = classify((data - minVals) / ranges, normData, datingLabels, 3)
+    print "You will probably like this person: ", result[class_ - 1]
 
 def img2vector(filename):
     returnVect = np.zeros((1,1024))
