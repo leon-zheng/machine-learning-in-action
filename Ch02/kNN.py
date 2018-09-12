@@ -24,8 +24,8 @@ def classify(data, dataSet, labels, k):
     for i in range(k):
         voteLabel = labels[sortedDistances[i]]
         classCount[voteLabel] = classCount.get(voteLabel,0) + 1
-    sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
-    return sortedClassCount[0][0]
+    sortedClass = sorted(classCount.iteritems(),key=lambda x:x[1],reverse=True)
+    return sortedClass[0][0]
 
 def createDataSet():
     group = np.array([[1.0,1.1],[1.0,1.0],[0,0],[0,0.1]])
@@ -51,10 +51,9 @@ def autoNorm(dataSet):
     minVals = dataSet.min(0)
     maxVals = dataSet.max(0)
     ranges = maxVals - minVals
-    normData = np.zeros(np.shape(dataSet))
-    m = dataSet.shape[0]
-    normData = dataSet - np.tile(minVals, (m,1))
-    normData = normData / np.tile(ranges, (m,1))
+    normData = np.zeros(dataSet.shape)
+    normData = dataSet - minVals
+    normData = normData / ranges
     return normData, ranges, minVals
 
 def datingClassTest():
