@@ -10,7 +10,8 @@ Input:      inX: vector to compare to existing dataset (1xN)
 Output:     the most popular class label
 
 @author: pbharrin
-@co-author: leon-zheng
+
+Modified on Sep 11, 2018 by leon-zheng
 '''
 import numpy as np
 import operator
@@ -82,35 +83,35 @@ def classifyPerson():
     print "You will probably like this person: ", result[class_ - 1]
 
 def img2vector(filename):
-    returnVect = np.zeros((1,1024))
+    vector = np.zeros((1,1024))
     fr = open(filename)
     for i in range(32):
         lineStr = fr.readline()
         for j in range(32):
-            returnVect[0,32*i+j] = int(lineStr[j])
-    return returnVect
+            vector[0,32*i+j] = int(lineStr[j])
+    return vector
 
 def handwritingClassTest():
-    hwLabels = []
-    trainingFileList = listdir('trainingDigits')           #load the training set
-    m = len(trainingFileList)
-    trainingMat = np.zeros((m,1024))
-    for i in range(m):
-        fileNameStr = trainingFileList[i]
-        fileStr = fileNameStr.split('.')[0]     #take off .txt
-        classNumStr = int(fileStr.split('_')[0])
-        hwLabels.append(classNumStr)
-        trainingMat[i,:] = img2vector('trainingDigits/%s' % fileNameStr)
-    testFileList = listdir('testDigits')        #iterate through the test set
+    labels = []
+    trainingList = listdir('trainingDigits')
+    length = len(trainingList)
+    trainingMat = np.zeros((length,1024))
+    for i in range(length):
+        filename = trainingList[i]
+        filestr = filename.split('.')[0]        #take off .txt
+        classNum = int(filestr.split('_')[0])
+        labels.append(classNum)
+        trainingMat[i,:] = img2vector('trainingDigits/%s' % filename)
+    testFileList = listdir('testDigits')
     errorCount = 0.0
-    mTest = len(testFileList)
-    for i in range(mTest):
-        fileNameStr = testFileList[i]
-        fileStr = fileNameStr.split('.')[0]     #take off .txt
-        classNumStr = int(fileStr.split('_')[0])
-        vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
-        classifierResult = classify(vectorUnderTest, trainingMat, hwLabels, 3)
-        print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr)
-        if (classifierResult != classNumStr): errorCount += 1.0
+    lenTest = len(testFileList)
+    for i in range(lenTest):
+        filename = testFileList[i]
+        filestr = filename.split('.')[0]
+        classNum = int(filestr.split('_')[0])
+        testData = img2vector('testDigits/%s' % filename)
+        result = classify(testData, trainingMat, labels, 3)
+        print "the classifier came back with: %d, the real answer is: %d" % (result, classNum)
+        if (result != classNum): errorCount += 1.0
     print "\nthe total number of errors is: %d" % errorCount
-    print "\nthe total error rate is: %f" % (errorCount/float(mTest))
+    print "\nthe total error rate is: %f" % (errorCount/float(lenTest))
