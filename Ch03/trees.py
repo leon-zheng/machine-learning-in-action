@@ -4,7 +4,6 @@ Decision Tree Source Code for Machine Learning in Action Ch. 3
 @author: Peter Harrington
 '''
 from math import log
-import operator
 
 def createDataSet():
     dataSet = [[1, 1, 'yes'],
@@ -36,11 +35,11 @@ def splitDataSet(dataSet, axis, value):
             retDataSet.append(reducedFeatVec)
     return retDataSet
 
-def chooseBestFeatureToSplit(dataSet):
-    numFeatures = len(dataSet[0]) - 1
+def chooseBestFeature(dataSet):
+    features = len(dataSet[0]) - 1
     baseEntropy = calcShannonEnt(dataSet)
-    bestInfoGain = 0.0; bestFeature = -1
-    for i in range(numFeatures):
+    bestInfoGain, bestFeature = 0.0, -1
+    for i in range(features):
         featList = [example[i] for example in dataSet]
         uniqueVals = set(featList)
         newEntropy = 0.0
@@ -57,10 +56,9 @@ def chooseBestFeatureToSplit(dataSet):
 def majorityCnt(classList):
     classCount={}
     for vote in classList:
-        if vote not in classCount.keys(): classCount[vote] = 0
-        classCount[vote] += 1
-    sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
-    return sortedClassCount[0][0]
+        classCount[vote] = classCount.get(vote, 0) + 1
+    sortedCount = sorted(classCount.iteritems(),key=lambda x:x[1],reverse=True)
+    return sortedCount[0][0]
 
 def createTree(dataSet,labels):
     classList = [example[-1] for example in dataSet]
@@ -68,7 +66,7 @@ def createTree(dataSet,labels):
         return classList[0]
     if len(dataSet[0]) == 1:
         return majorityCnt(classList)
-    bestFeat = chooseBestFeatureToSplit(dataSet)
+    bestFeat = chooseBestFeature(dataSet)
     bestFeatLabel = labels[bestFeat]
     myTree = {bestFeatLabel:{}}
     del(labels[bestFeat])
@@ -81,13 +79,13 @@ def createTree(dataSet,labels):
 
 def classify(inputTree,featLabels,testVec):
     firstStr = inputTree.keys()[0]
-    secondDict = inputTree[firstStr]
-    featIndex = featLabels.index(firstStr)
+    secondDict, featIndex = inputTree[firstStr], featLabels.index(firstStr)
     key = testVec[featIndex]
     valueOfFeat = secondDict[key]
     if isinstance(valueOfFeat, dict): 
         classLabel = classify(valueOfFeat, featLabels, testVec)
-    else: classLabel = valueOfFeat
+    else:
+        classLabel = valueOfFeat
     return classLabel
 
 def storeTree(inputTree,filename):
