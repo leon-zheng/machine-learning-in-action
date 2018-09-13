@@ -102,15 +102,15 @@ def handwritingClassTest():
         classNum = int(filestr.split('_')[0])
         labels.append(classNum)
         trainingMat[i,:] = img2vector('trainingDigits/%s' % filename)
-    testFileList = listdir('testDigits')
+    testList = listdir('testDigits')
     errorCount = 0.0
-    lenTest = len(testFileList)
+    lenTest = len(testList)
     for i in range(lenTest):
-        filename = testFileList[i]
+        filename = testList[i]
         filestr = filename.split('.')[0]
         classNum = int(filestr.split('_')[0])
-        testData = img2vector('testDigits/%s' % filename)
-        result = classify(testData, trainingMat, labels, 3)
+        testVec = img2vector('testDigits/%s' % filename)
+        result = classify(testVec, trainingMat, labels, 3)
         print "the classifier came back with: %d, the real answer is: %d" % (result, classNum)
         if (result != classNum): errorCount += 1.0
     print "\nthe total number of errors is: %d" % errorCount
