@@ -2,6 +2,7 @@
 Created on Oct 12, 2010
 Decision Tree Source Code for Machine Learning in Action Ch. 3
 @author: Peter Harrington
+modified on Sep 14, 2018 by leon-zheng
 '''
 from math import log
 
@@ -90,13 +91,15 @@ def classify(inputTree,featLabels,testVec):
         classLabel = valueOfFeat
     return classLabel
 
-def storeTree(inputTree,filename):
+def saveTree(inputTree,filename):
     import pickle
-    fw = open(filename,'w')
+    fw = open(filename,'wb')
     pickle.dump(inputTree,fw)
     fw.close()
 
-def grabTree(filename):
+def loadTree(filename):
     import pickle
-    fr = open(filename)
-    return pickle.load(fr)
+    fr = open(filename, 'rb')
+    tree = pickle.load(fr)
+    fr.close()
+    return tree
