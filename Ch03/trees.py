@@ -67,18 +67,20 @@ def createTree(dataSet,labels):
     if len(dataSet[0]) == 1:
         return majorityCnt(classList)
     bestFeat = chooseBestFeature(dataSet)
-    bestFeatLabel = labels[bestFeat]
+    label = labels[:]
+    bestFeatLabel = label[bestFeat]
     myTree = {bestFeatLabel:{}}
-    del(labels[bestFeat])
+    del(label[bestFeat])
     featValues = [example[bestFeat] for example in dataSet]
     uniqueVals = set(featValues)
     for value in uniqueVals:
-        subLabels = labels[:]
-        myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value),subLabels)
+        subLabel = label[:]
+        myTree[bestFeatLabel][value] = \
+        createTree(splitDataSet(dataSet, bestFeat, value),subLabel)
     return myTree
 
 def classify(inputTree,featLabels,testVec):
-    firstStr = inputTree.keys()[0]
+    firstStr = list(inputTree.keys())[0]
     secondDict, featIndex = inputTree[firstStr], featLabels.index(firstStr)
     key = testVec[featIndex]
     valueOfFeat = secondDict[key]
