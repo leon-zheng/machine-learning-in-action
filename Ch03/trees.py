@@ -61,23 +61,23 @@ def majorityCnt(classList):
     sortedCount = sorted(classCount.iteritems(),key=lambda x:x[1],reverse=True)
     return sortedCount[0][0]
 
-def createTree(dataSet,labels):
+def createTree(dataSet, features):
     classList = [example[-1] for example in dataSet]
     if classList.count(classList[0]) == len(classList): 
         return classList[0]
     if len(dataSet[0]) == 1:
         return majorityCnt(classList)
     bestFeat = chooseBestFeature(dataSet)
-    label = labels[:]
-    bestFeatLabel = label[bestFeat]
+    feature = features[:]
+    bestFeatLabel = feature[bestFeat]
     myTree = {bestFeatLabel:{}}
-    del(label[bestFeat])
+    del(feature[bestFeat])
     featValues = [example[bestFeat] for example in dataSet]
     uniqueVals = set(featValues)
     for value in uniqueVals:
-        subLabel = label[:]
+        subFeature = feature[:]
         myTree[bestFeatLabel][value] = \
-        createTree(splitDataSet(dataSet, bestFeat, value),subLabel)
+        createTree(splitDataSet(dataSet, bestFeat, value),subFeature)
     return myTree
 
 def classify(inputTree,featLabels,testVec):
